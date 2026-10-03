@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Enquete Presidencial 2026 — Simulação</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef1f5;font-family:Arial,sans-serif;color:#17202a}
+.wrap{max-width:620px;margin:0 auto;padding:18px}
+.card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 28px #0002;margin-bottom:16px}
+h1{font-size:25px;margin:0 0 8px}.notice{background:#fff3cd;border-radius:12px;padding:11px;font-size:13px;margin:12px 0 18px}
+.cand{display:flex;align-items:center;gap:12px;border:2px solid #e1e5ea;border-radius:14px;padding:13px;margin:9px 0;cursor:pointer}
+.cand.sel{border-color:#1769e0;background:#f1f6ff}.num{font-weight:700;background:#17202a;color:#fff;border-radius:9px;padding:8px;min-width:40px;text-align:center}.name{font-weight:700;flex:1}
+button{width:100%;border:0;border-radius:13px;padding:15px;background:#1769e0;color:#fff;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px}
+button:disabled{background:#aab4c0}.bar{height:13px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin-top:5px}.fill{height:100%;background:#1769e0}.row{margin:14px 0}.pct{float:right}.small{font-size:12px;color:#68717d}.total{font-size:18px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+<div class="small">ENQUETE INDEPENDENTE</div>
+<h1>Presidencial 2026</h1>
+<div class="notice">⚠️ Esta página é apenas uma <b>simulação/enquete</b>. Não é uma votação oficial e não possui validade eleitoral.</div>
+<div id="cands"></div>
+<button id="vote" onclick="votar()" disabled>Confirmar meu voto</button>
+</div>
+<div class="card">
+<h2>Resultado da simulação</h2>
+<div id="res"></div>
+<div class="total" id="total"></div>
+<p class="small">Nesta demonstração, os votos ficam salvos somente neste navegador. Para uma enquete pública real, é necessário conectar um banco de dados online.</p>
+</div>
+</div>
+<script>
+const cs=[
+["13","Luiz Inácio Lula da Silva"],["22","Flávio Bolsonaro"],["55","Ronaldo Caiado"],
+["30","Romeu Zema"],["14","Renan Santos"],["70","Augusto Cury"],
+["29","Rui Costa Pimenta"],["16","Hertz Dias"],["21","Edmilson Costa"],
+["80","Samara"],["35","Wilson Grassi"],["27","Clariana Barão"]
+];
+let votes=JSON.parse(localStorage.getItem("enquete2026")||"{}"), selected="";
+cs.forEach(c=>votes[c[0]]=votes[c[0]]||0);
+function draw(){
+cands.innerHTML=cs.map(c=>`<div class="cand ${selected==c[0]?'sel':''}" onclick="sel('${c[0]}')"><span class="num">${c[0]}</span><span class="name">${c[1]}</span><input type="radio" ${selected==c[0]?'checked':''}></div>`).join("");
+let t=Object.values(votes).reduce((a,b)=>a+b,0);
+res.innerHTML=cs.map(c=>{let p=t?votes[c[0]]/t*100:0;return `<div class="row"><b>${c[1]}</b><span class="pct">${p.toFixed(1)}% (${votes[c[0]]})</span><div class="bar"><div class="fill" style="width:${p}%"></div></div></div>`}).join("");
+total.textContent="Total de votos: "+t;
+vote.disabled=!selected;
+}
+function sel(n){selected=n;draw()}
+function votar(){
+if(!selected)return;
+votes[selected]++;localStorage.setItem("enquete2026",JSON.stringify(votes));
+alert("Voto registrado na simulação!");
+selected="";draw();
+}
+draw();
+</script>
+</body>
+</html>
